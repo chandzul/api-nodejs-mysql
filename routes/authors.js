@@ -40,7 +40,6 @@ function authorsApi(app) {
    * Ruta GET para obtener un solo author por ID
    */
   router.get('/:authorId', validationHandler({ authorId: authorIdSchema }, 'params'), async function(req, res, next) {
-
     // agregamos cache
     // cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
 
@@ -58,6 +57,63 @@ function authorsApi(app) {
     }
   });
 
+  /**
+   * Route POST para crear dar de alta un nuevo author pasandole un json en el request
+   */
+  router.post('/', validationHandler( createAuthorSchema ), async function(req, res, next) {
+
+    const { body: author } = req;
+
+    try {
+        const createdAuthorId = await authorsService.createAuthor({ author });
+
+        res.status(201).json({
+            data: createdAuthorId,
+            message: 'author created'
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+  /**
+   * Route PUT para modificar un author pasandole la id y la data
+   */
+  router.put('/:authorId', validationHandler({ authorId: authorIdSchema }, 'params'), validationHandler(updateAuthorSchema), async function(req, res, next) {
+
+    const { authorId } = req.params; // en la url
+    const { body: author } = req; // en el body de la peticion
+
+    try {
+        const updatedAuthorId = await authorsService.updateAuthor({ authorId, author });
+
+        res.status(200).json({
+            data: updatedAuthorId,
+            message: 'movie updated'
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+  /**
+   * Route DELETE para eliminar un author pasandole un ID
+   */
+  router.delete('/:authorId', validationHandler({ authorId: authorIdSchema }, 'params'), async function(req, res, next) {
+
+    const { authorId } = req.params; // en la url
+
+    try {
+        const deletedAuthorId = await authorsService.deletedAuthor({ authorId });
+
+        res.status(200).json({
+            data: deletedAuthorId,
+            message: 'author deleted'
+        });
+    } catch (error) {
+        next(error);
+    }
+});
 }
 
 module.exports = authorsApi;
