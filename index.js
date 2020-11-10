@@ -2,8 +2,11 @@ const express = require('express');
 const app = express();
 
 const { config } = require('./config/index');
+
+const authApi = require('./routes/auth');
 const moviesApi = require('./routes/movies');
-const authorsApi = require('./routes/authors');
+const userMoviesApi = require('./routes/userMovies');
+// const authorsApi = require('./routes/authors');
 
 // Cargamos - Middleware para el manejo de errores
 const {
@@ -17,8 +20,11 @@ const notFoundHandler = require('./utils/middleware/NotfoundHandler');
 app.use(express.json());
 
 // Routes Middleware de los endpoints de la aplicacion
-authorsApi(app);
-// moviesApi(app);
+// authorsApi(app);
+authApi(app);
+moviesApi(app);
+userMoviesApi(app);
+
 
 // Catch 404
 app.use(notFoundHandler);
